@@ -1,0 +1,112 @@
+/*Problem: Find Intersection Point of Two Linked Lists - Implement using linked list with dynamic memory allocation.
+
+Input:
+- First line: integer n
+- Second line: n space-separated integers (first list)
+- Third line: integer m
+- Fourth line: m space-separated integers (second list)
+
+Output:
+- Print value of intersection node or 'No Intersection'
+
+Example:
+Input:
+5
+10 20 30 40 50
+4
+15 25 30 40 50
+
+Output:
+30
+
+Explanation:
+Calculate lengths, advance pointer in longer list, traverse both simultaneously. First common node is intersection./*
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Create list
+struct Node* createList(int n) {
+    struct Node *head = NULL, *temp = NULL, *newNode;
+
+    for (int i = 0; i < n; i++) {
+        int val;
+        scanf("%d", &val);
+
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = val;
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            temp = newNode;
+        } else {
+            temp->next = newNode;
+            temp = newNode;
+        }
+    }
+    return head;
+}
+
+// Get length of list
+int getLength(struct Node* head) {
+    int len = 0;
+    while (head) {
+        len++;
+        head = head->next;
+    }
+    return len;
+}
+
+// Find intersection
+int findIntersection(struct Node* head1, struct Node* head2) {
+    int len1 = getLength(head1);
+    int len2 = getLength(head2);
+
+    struct Node *p1 = head1, *p2 = head2;
+
+    // Move pointer of longer list ahead
+    int diff = abs(len1 - len2);
+
+    if (len1 > len2) {
+        for (int i = 0; i < diff; i++) p1 = p1->next;
+    } else {
+        for (int i = 0; i < diff; i++) p2 = p2->next;
+    }
+
+    // Traverse together
+    while (p1 && p2) {
+        if (p1->data == p2->data) {  // comparing values (simplified case)
+            return p1->data;
+        }
+        p1 = p1->next;
+        p2 = p2->next;
+    }
+
+    return -1;
+}
+
+int main() {
+    int n, m;
+
+    // Input
+    scanf("%d", &n);
+    struct Node* head1 = createList(n);
+
+    scanf("%d", &m);
+    struct Node* head2 = createList(m);
+
+    int result = findIntersection(head1, head2);
+
+    if (result == -1)
+        printf("No Intersection\n");
+    else
+        printf("%d\n", result);
+
+    return 0;
+}
